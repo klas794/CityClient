@@ -5,6 +5,10 @@ using System.Text;
 
 using Xamarin.Forms;
 
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 namespace CityClient
 {
 	public class App : Application
@@ -13,6 +17,7 @@ namespace CityClient
 
         public App(string dbPath)
         {
+
             //set database path first, then retrieve main page
             FavouritesRepo = new FavouritesRepository(dbPath);
 
@@ -22,6 +27,11 @@ namespace CityClient
 
 		protected override void OnStart()
 		{
+            AppCenter.Start("android=b55b2a7f-47e0-4323-8d88-5811179b4dfc;" 
+                //+ "uwp={Your UWP App secret here};" +
+                //   "ios={Your iOS App secret here}"
+                , typeof(Analytics), typeof(Crashes));
+
 			// Handle when your app starts
 		}
 

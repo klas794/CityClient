@@ -18,8 +18,8 @@ namespace CityClient.Droid
     {
         protected override void OnCreate(Bundle bundle)
         {
-            AppCenter.Start("b55b2a7f-47e0-4323-8d88-5811179b4dfc",
-                   typeof(Analytics), typeof(Crashes));
+            //AppCenter.Start("b55b2a7f-47e0-4323-8d88-5811179b4dfc",
+            //       typeof(Analytics), typeof(Crashes));
 
             base.OnCreate(bundle);
 

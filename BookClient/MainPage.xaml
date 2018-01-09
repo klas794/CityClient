@@ -20,10 +20,10 @@
         </Grid.ColumnDefinitions>
 
         <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-            <local:MyEntry Text="" x:Name="CitySearchText" WidthRequest="130" IsEnabled="False" FontSize="Small" TextColor="Black" />
-            <Button x:Name="SearchButton" Text="Search" IsEnabled="False" Clicked="SearchButton_Clicked"></Button>
-            <Button x:Name="ViewAllButton" Text="All" IsEnabled="False" Clicked="ViewAllButton_Clicked"></Button>
-            <Button x:Name="ViewBookmarksButton" Text="Fav" IsEnabled="False" Clicked="ViewBookmarksButton_Clicked"></Button>
+            <local:MyEntry Text="" x:Name="CitySearchText" WidthRequest="130" IsEnabled="False" TextColor="Black" />
+            <Button x:Name="SearchButton" Text="Search" IsEnabled="False" Clicked="SearchButton_Clicked" ></Button>
+            <Button x:Name="ViewAllButton" Text="All" IsEnabled="False" Clicked="ViewAllButton_Clicked" WidthRequest="65"></Button>
+            <Button x:Name="ViewBookmarksButton" Text="Fav" IsEnabled="False" Clicked="ViewBookmarksButton_Clicked" WidthRequest="65"></Button>
         </StackLayout>
 
         <ListView x:Name="MenuItems" ItemsSource="{Binding}"

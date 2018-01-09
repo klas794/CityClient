@@ -1,4 +1,6 @@
 ﻿using CityClient.Data;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Plugin.Connectivity;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,8 @@ namespace CityClient
                 return;
             }
 
+            Analytics.TrackEvent("Refreshing list of cities");
+
             // Turn on network indicator
             this.IsBusy = true;
 
@@ -87,6 +91,7 @@ namespace CityClient
         
         async void OnViewCityDetails(object sender, ItemTappedEventArgs e)
         {
+            Analytics.TrackEvent("Viewing city: " + ((City)e.Item).Name);
             await Navigation.PushModalAsync(
                 await CityDetailsPage.CreateAsync(manager, cities, (City)e.Item));
         }
@@ -94,6 +99,11 @@ namespace CityClient
         private void SearchButton_Clicked(object sender, EventArgs e)
         {
             var searchText = CitySearchText.Text;
+
+            Analytics.TrackEvent("Searching for " + searchText,
+                 new Dictionary<string, string> {
+                    { "SearchTerm", searchText },
+                });
 
             if(!string.IsNullOrEmpty(searchText))
             {
@@ -116,6 +126,9 @@ namespace CityClient
 
         private void ViewAllButton_Clicked(object sender, EventArgs e)
         {
+            //Crashes.GenerateTestCrash();
+            Analytics.TrackEvent("Viewing all cities");
+
             cities.Clear();
 
             foreach (var item in citiesCache)
@@ -128,6 +141,8 @@ namespace CityClient
 
         private async void OnBookmark(object sender, EventArgs e)
         {
+            
+
             MenuItem item = (MenuItem)sender;
             //item.Icon = "ic_action_undo.png";
             //item.Clicked -= OnBookmark;
@@ -143,6 +158,8 @@ namespace CityClient
                 return;
             }
 
+            Analytics.TrackEvent("Bookmarking city");
+
             await App.FavouritesRepo.AddNewFavouriteAsync(city.ShortName);
 
             ViewBookmarksButton.IsEnabled = true;
@@ -150,6 +167,8 @@ namespace CityClient
 
         private async void OnRemoveBookmark(object sender, EventArgs e)
         {
+            Analytics.TrackEvent("Removing city bookmark");
+
             MenuItem item = (MenuItem)sender;
             //item.Icon = "ic_action_favorite.png";
             //item.Clicked -= OnRemoveBookmark;
@@ -168,6 +187,8 @@ namespace CityClient
 
         private async void ViewBookmarksButton_Clicked(object sender, EventArgs e)
         {
+            Analytics.TrackEvent("Viewing bookmarks list");
+
             var cityNames = await App.FavouritesRepo.GetAllFavouritesAsync();
 
             var favouriteCities = citiesCache.Where(x => cityNames.Any(y => y.Name == x.ShortName));
