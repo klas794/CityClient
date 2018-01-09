@@ -1,6 +1,7 @@
 ﻿using CityClient.Data;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Push;
 using Plugin.Connectivity;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,13 @@ namespace CityClient
         {
             BindingContext = cities;
             InitializeComponent();
+
+            Push.PushNotificationReceived += OnPushNotificationReceived;
+        }
+
+        private async void OnPushNotificationReceived(object sender, PushNotificationReceivedEventArgs e)
+        {
+            await DisplayAlert(e.Title, e.Message, "OK");
         }
 
         public bool InternetConnectionExists()
@@ -92,6 +100,11 @@ namespace CityClient
         private void SearchButton_Clicked(object sender, EventArgs e)
         {
             var searchText = CitySearchText.Text;
+
+            if(searchText == "secreterror")
+            {
+                throw new Exception("Secret error exception triggered");
+            }
 
             Analytics.TrackEvent("Searching for " + searchText,
                  new Dictionary<string, string> {
@@ -194,6 +207,11 @@ namespace CityClient
             }
 
             viewingBookmarks = true;
+        }
+
+        private void CitySearchText_Completed(object sender, EventArgs e)
+        {
+            SearchButton_Clicked(sender, e);
         }
     }
 }
