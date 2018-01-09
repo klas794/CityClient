@@ -27,17 +27,10 @@ namespace CityClient
 
         public bool InternetConnectionExists()
         {
-            try
-            {
-                if (!CrossConnectivity.IsSupported)
-                    return true;
+            if (!CrossConnectivity.IsSupported)
+                return true;
 
-                return CrossConnectivity.Current.IsConnected;
-            }
-            catch(Exception exc)
-            {
-                return false;
-            }
+            return CrossConnectivity.Current.IsConnected;
         }
 
         async void OnRefresh(object sender, EventArgs e)

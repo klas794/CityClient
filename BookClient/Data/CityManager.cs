@@ -17,8 +17,13 @@ namespace CityClient.Data
 
         public static HttpClient client;
 
-        private async Task<HttpClient> GetClient()
+        private static HttpClient GetClient()
         {
+            if (CityManager.client != null)
+            {
+                return CityManager.client;
+            }
+
             HttpClient client = new HttpClient();
             //if (string.IsNullOrEmpty(authorizationKey))
             //{
@@ -36,61 +41,49 @@ namespace CityClient.Data
 
         public async Task<IEnumerable<City>> GetAll()
         {
-            HttpClient client = await GetClient();
-
-            //if (CityManager.client == null) { 
-            //    client = await GetClient();
-            //}
-            //else
-            //{
-            //    client = CityManager.client;
-            //}
+            HttpClient client = CityManager.GetClient();
 
             List<City> cities = new List<City>();
-            try {
-                string result = await client.GetStringAsync(Url);
-                var citySearch = JsonConvert.DeserializeObject<CitySearchResult.Rootobject>(result);
 
-                foreach (var item in citySearch._embedded.citysearchresults)
-                {
-                    var shortName = item.matching_full_name.Substring(0, item.matching_full_name.IndexOf(','));
+            string result = await client.GetStringAsync(Url);
+            var citySearch = JsonConvert.DeserializeObject<CitySearchResult.Rootobject>(result);
 
-                    cities.Add(new City {
-                        Name = item.matching_full_name,
-                        ShortName = shortName,
-                        //BasicInfo = basicInfo,
-                        //DetailedInfo = !string.IsNullOrEmpty(urbanAreaLink) ?
-                        //    await GetDetailedInfo(client, urbanAreaLink) : null,
-                        BasicsUrl = item._links.cityitem.href,
-                    });
-
-                    //await InitCity(cities.Last());
-                }
-            }
-            catch(Exception e)
+            foreach (var item in citySearch._embedded.citysearchresults)
             {
+                var shortName = item.matching_full_name.Substring(0, item.matching_full_name.IndexOf(','));
 
+                cities.Add(new City {
+                    Name = item.matching_full_name,
+                    ShortName = shortName,
+                    //BasicInfo = basicInfo,
+                    //DetailedInfo = !string.IsNullOrEmpty(urbanAreaLink) ?
+                    //    await GetDetailedInfo(client, urbanAreaLink) : null,
+                    BasicsUrl = item._links.cityitem.href,
+                });
+
+                //await InitCity(cities.Last());
             }
             
-
             return cities;
         }
 
         public static async Task InitCity(City city)
         {
+            CityManager.GetClient();
+
             city.BasicInfo = await CityManager.GetBasicInfo(CityManager.client, city.BasicsUrl);
 
             city.DetailsUrl = city.BasicInfo._links.cityurban_area == null ? null :
                 string.Concat(city.BasicInfo._links.cityurban_area.href, "scores/");
 
-            var baseUrl = city.BasicInfo._links.cityurban_area == null ? null :
+            var imagesUrl = city.BasicInfo._links.cityurban_area == null ? null :
                 string.Concat(city.BasicInfo._links.cityurban_area.href, "images/");
 
             if (city.DetailsUrl != null) { 
                 city.DetailedInfo = await CityManager.GetDetailedInfo(CityManager.client, city.DetailsUrl);
             }
 
-            city.ImageUrl = baseUrl == null ? null : await CityManager.GetImage(CityManager.client, baseUrl);
+            city.ImageUrl = imagesUrl == null ? null : await CityManager.GetImage(CityManager.client, imagesUrl);
         }
 
         public static async Task<string> GetImage(HttpClient client, string url)
@@ -101,63 +94,38 @@ namespace CityClient.Data
 
             //url = string.Format("{0}images/", url);
 
-            try
-            {
-                string result = await client.GetStringAsync(url);
-                var imageSearch = JsonConvert.DeserializeObject<CityImages.Rootobject>(result);
+            string result = await client.GetStringAsync(url);
+            var imageSearch = JsonConvert.DeserializeObject<CityImages.Rootobject>(result);
 
-                return imageSearch.photos.FirstOrDefault()?.image.mobile;
+            return imageSearch.photos.FirstOrDefault()?.image.mobile;
 
-                //foreach (var item in imageSearch.photos)
-                //{
+            //foreach (var item in imageSearch.photos)
+            //{
 
-                //    images.Add(new City
-                //    {
-                //        Name = item.matching_full_name,
-                //        BasicInfo = basicInfo,
-                //        DetailedInfo = !string.IsNullOrEmpty(urbanAreaLink) ?
-                //            await GetDetailedInfo(client, urbanAreaLink) : null
-                //    });
-                //}
-            }
-            catch (Exception e)
-            {
-
-            }
-
-            return null;
+            //    images.Add(new City
+            //    {
+            //        Name = item.matching_full_name,
+            //        BasicInfo = basicInfo,
+            //        DetailedInfo = !string.IsNullOrEmpty(urbanAreaLink) ?
+            //            await GetDetailedInfo(client, urbanAreaLink) : null
+            //    });
+            //}
         }
 
         public static async Task<CityBasicInfo.Rootobject> GetBasicInfo(HttpClient client, string url)
         {
             List<City> cities = new List<City>();
-            try
-            {
-                string result = await client.GetStringAsync(url);
-                return JsonConvert.DeserializeObject<CityBasicInfo.Rootobject>(result);
-            }
-            catch (Exception e)
-            {
 
-            }
-
-            return null;
+            string result = await client.GetStringAsync(url);
+            return JsonConvert.DeserializeObject<CityBasicInfo.Rootobject>(result);
         }
 
         public static async Task<CityDetailedInfo.Rootobject> GetDetailedInfo(HttpClient client, string url)
         {
             List<City> cities = new List<City>();
-            try
-            {
-                string result = await client.GetStringAsync(url);
-                return JsonConvert.DeserializeObject<CityDetailedInfo.Rootobject>(result);
-            }
-            catch (Exception e)
-            {
 
-            }
-
-            return null;
+            string result = await client.GetStringAsync(url);
+            return JsonConvert.DeserializeObject<CityDetailedInfo.Rootobject>(result);
         }
         
     }

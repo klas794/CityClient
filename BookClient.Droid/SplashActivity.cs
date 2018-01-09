@@ -31,7 +31,7 @@ namespace com.xamarin.sample.splashscreen
         public override void OnBackPressed() { }
 
         // Simulates background work that happens behind the splash screen
-        async void SimulateStartup()
+        void SimulateStartup()
         {
             //Log.Debug(TAG, "Performing some startup work that takes a bit of time.");
             //await Task.Delay(8000); // Simulate a bit of startup work.
