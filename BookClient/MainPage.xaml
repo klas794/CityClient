@@ -17,16 +17,17 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-            <local:MyEntry Text="" x:Name="CitySearchText" WidthRequest="130" IsEnabled="False" TextColor="Black" Completed="CitySearchText_Completed" />
-            <Button x:Name="SearchButton" Text="Search" IsEnabled="False" Clicked="SearchButton_Clicked" ></Button>
-            <Button x:Name="ViewAllButton" Text="All" IsEnabled="False" Clicked="ViewAllButton_Clicked" WidthRequest="65"></Button>
-            <Button x:Name="ViewBookmarksButton" Text="Fav" IsEnabled="False" Clicked="ViewBookmarksButton_Clicked" WidthRequest="65"></Button>
-        </StackLayout>
+        <local:MyEntry Grid.Column="0" Text="" x:Name="CitySearchText" IsEnabled="False" TextColor="Black" Completed="CitySearchText_Completed" HorizontalOptions="FillAndExpand" />
+        <Button Grid.Column="1" x:Name="SearchButton" Text="Search" IsEnabled="False" Clicked="SearchButton_Clicked" HorizontalOptions="FillAndExpand" ></Button>
+        <Button Grid.Column="2" x:Name="ViewAllButton" Text="All" IsEnabled="False" Clicked="ViewAllButton_Clicked" HorizontalOptions="FillAndExpand"></Button>
+        <Button Grid.Column="3" x:Name="ViewBookmarksButton" Text="Fav" IsEnabled="False" Clicked="ViewBookmarksButton_Clicked" HorizontalOptions="FillAndExpand"></Button>
 
-        <ListView x:Name="MenuItems" ItemsSource="{Binding}"
+        <ListView Grid.ColumnSpan="4" x:Name="MenuItems" ItemsSource="{Binding}"
                   ItemTapped="OnViewCityDetails" Grid.Row="1" Grid.Column="0" BackgroundColor="White">
             <ListView.ItemTemplate>
               <DataTemplate>
@@ -48,7 +49,7 @@
         </ListView>
 
         <!-- Challenge exercise - add Activity Indicator -->
-        <StackLayout IsVisible="{Binding Source={x:Reference ThePage}, Path=IsBusy}"
+        <StackLayout Grid.ColumnSpan="4" IsVisible="{Binding Source={x:Reference ThePage}, Path=IsBusy}"
                     HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20"
                      Grid.Row="1" Grid.Column="0">
           <Label Text="Loading Data..." TextColor="Gray" HorizontalOptions="Center" />
@@ -56,7 +57,7 @@
           </ActivityIndicator>
         </StackLayout>
 
-        <StackLayout x:Name="StartUpInfo" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20"
+        <StackLayout Grid.ColumnSpan="4" x:Name="StartUpInfo" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" Padding="20"
                      Grid.Row="1" Grid.Column="0">
             <Label Text="Click refresh to load cities data..." TextColor="Gray" HorizontalOptions="Center" />
         </StackLayout>
